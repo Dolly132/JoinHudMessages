@@ -27,6 +27,7 @@ enum struct MsgIndexData
 {
     float MsgTime;
     float HoldTime;
+    float coordinates[2];
     char Message[124];
     int color[4];
 }
@@ -68,12 +69,17 @@ public void OnMapStart()
         Kv.GetSectionName(sIndex, sizeof(sIndex));
         float time = Kv.GetFloat("MsgTime");
         float holdtime = Kv.GetFloat("HoldTime");
+        float x = Kv.GetFloat("X");
+        float y = Kv.GetFloat("Y");
+        
         Kv.GetString("Message", sMessage, sizeof(sMessage));
         int index = StringToInt(sIndex);
         
         // let's store message index data:
         MsgData[index].MsgTime = time;
         MsgData[index].HoldTime = holdtime;
+        MsgData[index].coordinates[0] = x;
+        MsgData[index].coordinates[1] = y;
         Format(MsgData[index].Message, 124, sMessage);
         MsgData[index].color[0] = Kv.GetNum("r");
         MsgData[index].color[1] = Kv.GetNum("g");
@@ -108,7 +114,7 @@ public Action HudMessage_Timer(Handle timer, DataPack pack)
     if(!IsClientInGame(client))
         return Plugin_Stop;    
 
-    SetHudTextParams(-1.0, 0.2, MsgData[index].HoldTime, MsgData[index].color[0], MsgData[index].color[1], MsgData[index].color[2], MsgData[index].color[3]);
+    SetHudTextParams(MsgData[index].coordinates[0], MsgData[index].coordinates[1], MsgData[index].HoldTime, MsgData[index].color[0], MsgData[index].color[1], MsgData[index].color[2], MsgData[index].color[3]);
     ShowSyncHudText(client, g_hHudMsg, MsgData[index].Message);
     return Plugin_Continue;
 }
