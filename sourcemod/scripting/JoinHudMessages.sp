@@ -83,6 +83,8 @@ public void OnMapStart()
         g_iMessagesCount++;
     }
     while(Kv.GotoNextKey());
+    
+    delete Kv;
 }
 
 public void OnClientPostAdminCheck(int client)
