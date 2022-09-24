@@ -95,11 +95,13 @@ public void OnMapStart()
 
 public void OnClientPostAdminCheck(int client)
 {
+    int iClient = GetClientUserId(client);
+    
     for(int i = 0; i <= g_iMessagesCount; i++)
     {
     	DataPack pack;
         CreateDataTimer(MsgData[i].MsgTime, HudMessage_Timer, pack);
-        pack.WriteCell(GetClientUserId(client));
+        pack.WriteCell(iClient);
     	pack.WriteCell(i);
     }
 }
@@ -111,10 +113,19 @@ public Action HudMessage_Timer(Handle timer, DataPack pack)
     int client = GetClientOfUserId(userid);
     int index = pack.ReadCell();
     
-    if(!IsClientInGame(client))
+    if(!IsValidClient(client))
         return Plugin_Stop;    
 
     SetHudTextParams(MsgData[index].coordinates[0], MsgData[index].coordinates[1], MsgData[index].HoldTime, MsgData[index].color[0], MsgData[index].color[1], MsgData[index].color[2], MsgData[index].color[3]);
     ShowSyncHudText(client, g_hHudMsg, MsgData[index].Message);
     return Plugin_Continue;
+}
+
+stock bool IsValidClient(int client, bool nobots = true)
+{
+	if (client <= 0 || client > MaxClients || !IsClientConnected(client) || (nobots && IsFakeClient(client)))
+	{
+		return false;
+	}
+	return IsClientInGame(client);
 }
