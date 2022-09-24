@@ -95,7 +95,10 @@ public void OnMapStart()
 
 public void OnClientPostAdminCheck(int client)
 {
-    for(int i = 0; i <= g_iMessagesCount; i++)
+	if(IsFakeClient(client))
+		return;
+	
+	for(int i = 0; i <= g_iMessagesCount; i++)
     {
     	DataPack pack;
         CreateDataTimer(MsgData[i].MsgTime, HudMessage_Timer, pack);
@@ -111,6 +114,9 @@ public Action HudMessage_Timer(Handle timer, DataPack pack)
     int client = GetClientOfUserId(userid);
     int index = pack.ReadCell();
     
+    if(client < 1)
+    	return Plugin_Stop;
+    	
     if(!IsClientInGame(client))
         return Plugin_Stop;    
 
